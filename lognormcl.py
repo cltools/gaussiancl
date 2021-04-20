@@ -34,7 +34,7 @@ Reference/API
 
 '''
 
-__version__ = '2021.4.16'
+__version__ = '2021.4.20'
 
 __all__ = [
     'ln2n',
@@ -48,24 +48,39 @@ from transformcl import cltoxi, xitocl
 
 def ln2n(cl, alpha, alpha2=None):
     '''lognormal to normal angular power spectrum
+
+    If either `alpha` or `alpha2` is ``False``, the corresponding field is
+    assumed to be normal.
+
     '''
+    if alpha2 is None:
+        alpha2 = alpha
 
     xi = cltoxi(cl)
-    xi /= alpha
-    xi /= alpha2 if alpha2 is not None else alpha
-    np.log1p(xi, out=xi)
-
+    if alpha is not False:
+        xi /= alpha
+    if alpha2 is not False:
+        xi /= alpha2
+    if alpha is not False and alpha2 is not False:
+        np.log1p(xi, out=xi)
     return xitocl(xi)
-
 
 
 def n2ln(cl, alpha, alpha2=None):
     '''normal to lognormal angular power spectrum
+
+    If either `alpha` or `alpha2` is ``False``, the corresponding field is
+    assumed to be normal.
+
     '''
+    if alpha2 is None:
+        alpha2 = alpha
 
     xi = cltoxi(cl)
-    np.expm1(xi, out=xi)
-    xi *= alpha
-    xi *= alpha2 if alpha2 is not None else alpha
-
+    if alpha is not False and alpha2 is not False:
+        np.expm1(xi, out=xi)
+    if alpha is not False:
+        xi *= alpha
+    if alpha2 is not False:
+        xi *= alpha2
     return xitocl(xi)
