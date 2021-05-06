@@ -1,24 +1,25 @@
 
-lognormcl
-=========
+normcl
+======
 
-**angular power spectra of lognormal random fields**
+**angular power spectra conversions for normal random fields**
 
 This is a minimal Python package for working with the angular power spectra of
-lognormal spherical random fields.  It can currently convert between the power
-spectra of lognormal random fields and their constituent normal random fields.
+spherical random fields constructed from normals.  It can currently convert
+between the power spectra of lognormal random fields and their constituent
+normal random fields.
 
 The package can be installed using pip:
 
-    pip install lognormcl
+    pip install normcl
 
-Then import the `ln2n` and `n2ln` functions from the package:
+Then import the `lognormal` and `lognormal_normal` functions from the package:
 
-    from lognormcl import ln2n, n2ln
+    from normcl import lognormal, lognormal_normal
 
 For more information, please see the [documentation].
 
 Current functionality covers the absolutely minimal use case.  Please open an
 issue on GitHub if you would like to see anything added.
 
-[documentation]: https://cltools.readthedocs.io/lognormcl/
+[documentation]: https://cltools.readthedocs.io/normcl/
