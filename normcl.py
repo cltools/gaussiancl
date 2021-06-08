@@ -50,7 +50,7 @@ Reference/API
 
 '''
 
-__version__ = '2021.5.5'
+__version__ = '2021.6.8'
 
 __all__ = [
     'lognormal',
@@ -62,7 +62,7 @@ import numpy as np
 from transformcl import cltoxi, xitocl
 
 
-def lognormal(cl, alpha, alpha2=None, *, inv=True):
+def lognormal(cl, alpha, alpha2=None, *, inv=False):
     '''lognormal angular power spectrum
 
     '''
