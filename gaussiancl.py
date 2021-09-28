@@ -2,22 +2,21 @@
 # license: MIT
 r'''
 
-Angular power spectra conversions for normal fields  (:mod:`normcl`)
-====================================================================
+Angular power spectra transformations for Gaussian fields  (:mod:`gaussiancl`)
+==============================================================================
 
 This is a minimal Python package for working with the angular power spectra of
-spherical random fields constructed from normals.  It can currently convert
-between the power spectra of lognormal random fields and their constituent
-normal random fields.
+spherical random fields constructed from transformed Gaussian random fields.
+It can currently transform power spectra of lognormal fields.
 
 The package can be installed using pip::
 
-    pip install normcl
+    pip install gaussiancl
 
-Then import the :func:`~normcl.lognormal` and :func:`~normcl.lognormal_normal`
-functions from the package::
+Then import the :func:`~gaussiancl.lognormal_cl` and
+:func:`~gaussiancl.lognormal_normal_cl` functions from the package::
 
-    from normcl import lognormal, lognormal_normal
+    from gaussiancl import lognormal_cl, lognormal_normal_cl
 
 Current functionality covers the absolutely minimal use case.  Please open an
 issue on GitHub if you would like to see anything added.
@@ -45,16 +44,16 @@ Reference/API
    :toctree: api
    :nosignatures:
 
-   lognormal
-   lognormal_normal
+   lognormal_cl
+   lognormal_normal_cl
 
 '''
 
-__version__ = '2021.6.8'
+__version__ = '2021.9.28'
 
 __all__ = [
-    'lognormal',
-    'lognormal_normal',
+    'lognormal_cl',
+    'lognormal_normal_cl',
 ]
 
 
@@ -62,7 +61,7 @@ import numpy as np
 from transformcl import cltoxi, xitocl
 
 
-def lognormal(cl, alpha, alpha2=None, *, inv=False):
+def lognormal_cl(cl, alpha, alpha2=None, *, inv=False):
     '''lognormal angular power spectrum
 
     '''
@@ -81,7 +80,7 @@ def lognormal(cl, alpha, alpha2=None, *, inv=False):
     return xitocl(xi)
 
 
-def lognormal_normal(cl, alpha, *, inv=False):
+def lognormal_normal_cl(cl, alpha, *, inv=False):
     '''lognormal cross normal angular power spectrum
 
     '''
