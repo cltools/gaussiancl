@@ -49,7 +49,7 @@ Reference/API
 
 '''
 
-__version__ = '2021.9.28'
+__version__ = '2022.7.28'
 
 __all__ = [
     'lognormal_cl',
