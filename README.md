@@ -5,17 +5,18 @@ gaussiancl
 **angular power spectra transformation for Gaussian random fields**
 
 This is a minimal Python package for working with the angular power spectra of
-spherical random fields constructed from transformed Gaussian random fields.
-It can currently transform power spectra of lognormal fields.
+spherical random fields constructed by transforming Gaussian random fields.
+
+It can solve for the Gaussian angular power spectrum that will yield a given
+target angular power spectrum under a given transformation, such as lognormal.
 
 The package can be installed using pip:
 
     pip install gaussiancl
 
-Then import the `lognormal_cl` and `lognormal_normal_cl` functions from the
-package:
+Then import the `gaussiancl` function from the package:
 
-    from gaussiancl import lognormal_cl, lognormal_normal_cl
+    from gaussiancl import gaussiancl
 
 For more information, please see the [documentation].
 
