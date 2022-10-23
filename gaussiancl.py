@@ -53,7 +53,7 @@ Reference/API
 
 '''
 
-__version__ = '2022.10.14'
+__version__ = '2022.10.21'
 
 __all__ = [
     'gcllim',
@@ -76,6 +76,12 @@ def _gettfm(name):
     return g[name]
 
 
+def _relerr(dx, x):
+    '''compute the relative error max(|dx/x|)'''
+    q = np.divide(dx, x, where=(dx != 0), out=np.zeros_like(dx))
+    return np.fabs(q).max()
+
+
 def gcllim(cl, tfm, pars=(), *, inv=False, der=False):
     '''band-limited Gaussian cl transform'''
     if not callable(tfm):
@@ -83,26 +89,27 @@ def gcllim(cl, tfm, pars=(), *, inv=False, der=False):
     return corrtocl(tfm(cltocorr(cl), *pars, inv=inv, der=der))
 
 
-def gaussiancl(cl, tfm, pars=(), *, gl=None, n=None, tol=1e-5, maxiter=20,
-               monopole=None, return_iter=False, return_tol=False):
+def gaussiancl(cl, tfm, pars=(), *, gl=None, n=None, cltol=1e-5, gltol=1e-5,
+               maxiter=20, monopole=None):
     '''Solve for a Gaussian angular power spectrum.
 
-    The function returns an error indicator ``err`` as follows:
+    The function returns a status indicator ``info`` as follows:
 
-    * ``0``, converged solution, no error;
-    * ``-i``, solution did not converge but no further improvement was obtained
-      after ``i`` iterations;
-    * ``i``, solution did not converge in the maximum number of ``i``
-      iterations.
-
-    This means that ``err > 0`` checks if the solution could be improved.
+    * ``0``, solution did not converge using the maximum number of iterations;
+    * ``1``, solution converged in cl relative error;
+    * ``2``, solution converged in gl relative error;
+    * ``3``, solution converged in both of the above.
 
     Returns
     -------
     gl : array_like
         Gaussian angular power spectrum solution.
-    err : int
-        Error indicator.
+    info : int
+        Status indicator.
+    clerr : float
+        Achieved relative error in the angular power spectrum.
+    niter : int
+        Number of iterations.
 
     '''
 
@@ -130,14 +137,13 @@ def gaussiancl(cl, tfm, pars=(), *, gl=None, n=None, tol=1e-5, maxiter=20,
     fl = corrtocl(tfm(gt, *pars))[:m] - cl
     if monopole is not None:
         fl[0] = 0
-    f2 = np.dot(fl, fl)
+    clerr = _relerr(fl, cl)
 
-    i = 0
-    while np.any(np.fabs(fl) > tol*np.fabs(cl)):
-        i += 1
-        if i > maxiter:
-            i -= 1
-            err = i
+    info = 0
+    for i in range(maxiter):
+        if clerr <= cltol:
+            info |= 1
+        if info > 0:
             break
 
         ft = cltocorr(np.pad(fl, (0, k)))
@@ -146,32 +152,23 @@ def gaussiancl(cl, tfm, pars=(), *, gl=None, n=None, tol=1e-5, maxiter=20,
         if monopole is not None:
             xl[0] = 0
 
-        while np.dot(xl, xl) != 0:
+        while True:
             gl_ = gl + xl
             gt_ = cltocorr(np.pad(gl_, (0, k)))
             fl_ = corrtocl(tfm(gt_, *pars))[:m] - cl
             if monopole is not None:
                 fl_[0] = 0
-            f2_ = np.dot(fl_, fl_)
-            if f2_ <= f2:
+            clerr_ = _relerr(fl_, cl)
+            if clerr_ <= clerr:
                 break
-            xl = xl/2
-        else:
-            err = -i
-            break
+            xl /= 2
 
-        gl, gt, fl, f2 = gl_, gt_, fl_, f2_
-    else:
-        err = 0
+        if _relerr(xl, gl) <= gltol:
+            info |= 2
 
-    result = gl, err
+        gl, gt, fl, clerr = gl_, gt_, fl_, clerr_
 
-    if return_iter:
-        result = *result, i
-    if return_tol:
-        result = *result, np.fabs(fl[fl != 0]/cl[fl != 0]).max()
-
-    return result
+    return gl, info, clerr, i
 
 
 def normal(x, *, inv=False, der=False):
