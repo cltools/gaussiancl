@@ -47,18 +47,16 @@ Reference/API
 
    gcllim
    gaussiancl
-   normal
    lognormal
    lognormal_normal
 
 '''
 
-__version__ = '2022.10.21'
+__version__ = '2023.1'
 
 __all__ = [
     'gcllim',
     'gaussiancl',
-    'normal',
     'lognormal',
     'lognormal_normal',
 ]
@@ -169,14 +167,6 @@ def gaussiancl(cl, tfm, pars=(), *, gl=None, n=None, cltol=1e-5, gltol=1e-5,
         gl, gt, fl, clerr = gl_, gt_, fl_, clerr_
 
     return gl, info, clerr, i
-
-
-def normal(x, *, inv=False, der=False):
-    '''normal correlations'''
-    if not der:
-        return x
-    else:
-        return np.zeros_like(x)
 
 
 def lognormal(x, alpha, alpha2=None, *, inv=False, der=False):
